@@ -6,7 +6,7 @@ import { useAppContext } from "@/context/AppContext";
 // Nothing on this page is aspirational fiction: the teams listed are the ones
 // the product actually needs to run (catalogue, delivery, seller onboarding,
 // support), and applications go to the same inbox the Help Center publishes.
-const CAREERS_EMAIL = "support@kawilmart.ug";
+const CAREERS_EMAIL = "support@wilwa.ug";
 
 const Icon = ({ type, className = "h-5 w-5" }) => {
   const paths = {

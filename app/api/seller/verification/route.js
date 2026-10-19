@@ -74,7 +74,7 @@ export async function POST(request) {
         }
 
         const uploadResult = await uploadFileToCloudinary(file, {
-            folder: "kawilmart/verification",
+            folder: "wilwa/verification",
             transformation: [{ width: 1600, crop: "limit", quality: "auto", fetch_format: "auto" }],
         });
 

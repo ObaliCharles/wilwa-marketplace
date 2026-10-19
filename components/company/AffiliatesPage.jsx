@@ -7,7 +7,7 @@ import { useAppContext } from "@/context/AppContext";
 // product yet, so this page does not promise a commission rate or a link
 // generator. It describes the partnerships we actually run by hand today and
 // says plainly that the automated version is not live.
-const PARTNERS_EMAIL = "support@kawilmart.ug";
+const PARTNERS_EMAIL = "support@wilwa.ug";
 
 const Icon = ({ type, className = "h-5 w-5" }) => {
   const paths = {

@@ -340,7 +340,7 @@ const legalTabs = [
     intro:
       "This FAQ focuses on the features and workflows Wilwa currently runs, including cash on delivery, rider assignment, seller access controls, and privacy support.",
     cta: {
-      href: "mailto:kawilmart@gmail.com",
+      href: "mailto:support@wilwa.ug",
       label: "Email Wilwa",
       description: "Prefer email instead of the support inbox?",
     },

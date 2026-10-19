@@ -77,7 +77,7 @@ const CONTACT_CHANNELS = [
   { key: "chat", label: "Live Chat", detail: "Average reply: < 1 min", action: "Start Chat", icon: "chat", href: "/inbox?tab=support", tone: "text-orange-600 bg-orange-50" },
   { key: "phone", label: "Call Us", detail: "Mon – Sun (8AM – 10PM)", action: "0767 934 191", icon: "phone", href: "tel:+256767934191", tone: "text-emerald-600 bg-emerald-50" },
   { key: "whatsapp", label: "WhatsApp", detail: "Chat with us on WhatsApp", action: "0767 934 191", icon: "whatsapp", href: "https://wa.me/256767934191", tone: "text-green-600 bg-green-50" },
-  { key: "mail", label: "Email Us", detail: "We reply within 24 hours", action: "support@kawilmart.ug", icon: "mail", href: "mailto:support@kawilmart.ug", tone: "text-sky-600 bg-sky-50" },
+  { key: "mail", label: "Email Us", detail: "We reply within 24 hours", action: "support@wilwa.ug", icon: "mail", href: "mailto:support@wilwa.ug", tone: "text-sky-600 bg-sky-50" },
 ];
 
 const SectionHeading = ({ title, action, onAction }) => (

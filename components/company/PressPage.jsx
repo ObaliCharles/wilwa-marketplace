@@ -11,7 +11,7 @@ import { marketplaceFilterCategories } from "@/lib/marketplaceCategories";
 // options from lib/orderLifecycle, the per-seller order split from checkout,
 // the 7-day return window from the order pages. No press releases are invented
 // here: if we have not published one, the page says so.
-const PRESS_EMAIL = "support@kawilmart.ug";
+const PRESS_EMAIL = "support@wilwa.ug";
 const PRESS_PHONE = "+256767934191";
 const LOGO_FILE = "/wilwa-email-logo.png";
 
