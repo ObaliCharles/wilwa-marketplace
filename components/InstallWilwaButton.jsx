@@ -13,14 +13,18 @@ const isStandalone = () => window.matchMedia?.("(display-mode: standalone)").mat
 
 export default function InstallWilwaButton({ className = "" }) {
   const [installEvent, setInstallEvent] = useState(null);
-  const [showIosHelp, setShowIosHelp] = useState(false);
+  const [helpPlatform, setHelpPlatform] = useState("");
   const [available, setAvailable] = useState(false);
 
   useEffect(() => {
     if (isStandalone() || sessionStorage.getItem(DISMISSED_KEY)) return undefined;
 
+    // Keep a real install entry point visible even when Chromium withholds
+    // `beforeinstallprompt` (for example on a first visit). The click then
+    // gives honest browser-specific instructions instead of disappearing.
+    setAvailable(true);
+
     if (isAppleMobile()) {
-      setAvailable(true);
       return undefined;
     }
 
@@ -32,7 +36,7 @@ export default function InstallWilwaButton({ className = "" }) {
     const onInstalled = () => {
       setInstallEvent(null);
       setAvailable(false);
-      setShowIosHelp(false);
+      setHelpPlatform("");
     };
 
     window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
@@ -45,10 +49,13 @@ export default function InstallWilwaButton({ className = "" }) {
 
   const install = async () => {
     if (isAppleMobile()) {
-      setShowIosHelp(true);
+      setHelpPlatform("ios");
       return;
     }
-    if (!installEvent) return;
+    if (!installEvent) {
+      setHelpPlatform("browser");
+      return;
+    }
 
     await installEvent.prompt();
     const result = await installEvent.userChoice;
@@ -68,22 +75,29 @@ export default function InstallWilwaButton({ className = "" }) {
         Install Wilwa
       </button>
 
-      {showIosHelp ? (
-        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-slate-950/40 p-4 sm:items-center" role="presentation" onClick={() => setShowIosHelp(false)}>
-          <section role="dialog" aria-modal="true" aria-labelledby="ios-install-title" className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+      {helpPlatform ? (
+        <div className="fixed inset-0 z-[80] flex items-end justify-center bg-slate-950/40 p-4 sm:items-center" role="presentation" onClick={() => setHelpPlatform("")}>
+          <section role="dialog" aria-modal="true" aria-labelledby="install-help-title" className="w-full max-w-sm rounded-2xl bg-white p-5 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-orange-600">Install Wilwa</p>
-                <h2 id="ios-install-title" className="mt-1 text-lg font-bold text-slate-950">Add Wilwa to your Home Screen</h2>
+                <h2 id="install-help-title" className="mt-1 text-lg font-bold text-slate-950">{helpPlatform === "ios" ? "Add Wilwa to your Home Screen" : "Install Wilwa from your browser menu"}</h2>
               </div>
-              <button type="button" onClick={() => setShowIosHelp(false)} aria-label="Close installation instructions" className="rounded-full p-1 text-slate-500 hover:bg-slate-100">×</button>
+              <button type="button" onClick={() => setHelpPlatform("")} aria-label="Close installation instructions" className="rounded-full p-1 text-slate-500 hover:bg-slate-100">×</button>
             </div>
-            <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-600">
-              <li>Open this page in Safari.</li>
-              <li>Tap the Share button in Safari&apos;s toolbar.</li>
-              <li>Select <strong className="font-semibold text-slate-900">Add to Home Screen</strong>, then tap Add.</li>
-            </ol>
-            <button type="button" onClick={() => setShowIosHelp(false)} className="mt-5 w-full rounded-full bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-700">Got it</button>
+            {helpPlatform === "ios" ? (
+              <ol className="mt-4 list-decimal space-y-2 pl-5 text-sm leading-6 text-slate-600">
+                <li>Open this page in Safari.</li>
+                <li>Tap the Share button in Safari&apos;s toolbar.</li>
+                <li>Select <strong className="font-semibold text-slate-900">Add to Home Screen</strong>, then tap Add.</li>
+              </ol>
+            ) : (
+              <div className="mt-4 space-y-3 text-sm leading-6 text-slate-600">
+                <p>Use Chrome or Edge&apos;s menu to choose <strong className="font-semibold text-slate-900">Install Wilwa</strong> or <strong className="font-semibold text-slate-900">Add to Home screen</strong>.</p>
+                <p>If that option is not shown yet, refresh this secure page after it finishes loading. Some browsers decide install eligibility after the first visit.</p>
+              </div>
+            )}
+            <button type="button" onClick={() => setHelpPlatform("")} className="mt-5 w-full rounded-full bg-orange-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-700">Got it</button>
           </section>
         </div>
       ) : null}
