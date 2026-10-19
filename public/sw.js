@@ -1,8 +1,12 @@
-const CACHE_VERSION = "wilwa-shell-v3";
-const APP_SHELL = ["/", "/offline", "/manifest.webmanifest", "/images/wilwa-icon.png", "/images/wilwa-launch-screen.png", "/icons/wilwa-192.png", "/icons/wilwa-512.png", "/icons/wilwa-512-maskable.png", "/favicon.ico"];
+const CACHE_VERSION = "wilwa-shell-v4";
+const APP_SHELL = ["/", "/offline", "/manifest.webmanifest", "/images/wilwa-icon.png", "/images/wilwa-launch-screen.png?v=2", "/icons/wilwa-192.png", "/icons/wilwa-512.png", "/icons/wilwa-512-maskable.png", "/favicon.ico"];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_VERSION).then((cache) => cache.addAll(APP_SHELL)));
+  event.waitUntil(
+    caches.open(CACHE_VERSION)
+      .then((cache) => cache.addAll(APP_SHELL))
+      .then(() => self.skipWaiting())
+  );
 });
 
 self.addEventListener("activate", (event) => {

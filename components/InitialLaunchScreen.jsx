@@ -35,11 +35,12 @@ export default function InitialLaunchScreen() {
       aria-label="Loading Wilwa"
     >
       <Image
-        src="/images/wilwa-launch-screen.png"
+        src="/images/wilwa-launch-screen.png?v=2"
         alt=""
         width={1024}
         height={1536}
         priority
+        unoptimized
         sizes="100vw"
         className="initial-launch-artwork"
       />
