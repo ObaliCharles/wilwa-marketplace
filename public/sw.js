@@ -1,5 +1,5 @@
-const CACHE_VERSION = "wilwa-shell-v1";
-const APP_SHELL = ["/", "/offline", "/manifest.webmanifest", "/icons/wilwa-192.png", "/icons/wilwa-512.png"];
+const CACHE_VERSION = "wilwa-shell-v2";
+const APP_SHELL = ["/", "/offline", "/manifest.webmanifest", "/images/wilwa-icon.png", "/icons/wilwa-192.png", "/icons/wilwa-512.png", "/icons/wilwa-512-maskable.png", "/favicon.ico"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_VERSION).then((cache) => cache.addAll(APP_SHELL)));

@@ -7,6 +7,7 @@ import RouteLoader from "@/components/RouteLoader";
 import RouteShell from "@/components/RouteShell";
 import { getSiteUrl } from "@/lib/siteUrl";
 import PwaServiceWorker from "@/components/PwaServiceWorker";
+import InitialLaunchScreen from "@/components/InitialLaunchScreen";
 
 const siteUrl = getSiteUrl();
 const normalizedSiteUrl = siteUrl.replace(/\/$/, "");
@@ -42,7 +43,10 @@ export const metadata = {
   applicationName: "Wilwa Uganda",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Wilwa" },
-  icons: { icon: "/favicon.ico", apple: "/icons/wilwa-192.png" },
+  icons: {
+    icon: [{ url: "/favicon.ico", type: "image/png", sizes: "32x32" }],
+    apple: [{ url: "/icons/wilwa-192.png", type: "image/png", sizes: "192x192" }],
+  },
   keywords: ["online shopping Uganda", "Northern Uganda marketplace", "buy online Uganda", "Wilwa", "Uganda ecommerce"],
   alternates: { canonical: "/" },
   openGraph: {
@@ -140,6 +144,7 @@ export default function RootLayout({ children }) {
           <Suspense fallback={null}>
             <AppContextProvider>
               <PwaServiceWorker />
+              <InitialLaunchScreen />
               <RouteLoader />
               <RouteShell>
                 {children}
