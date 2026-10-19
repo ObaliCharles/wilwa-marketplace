@@ -14,9 +14,9 @@ const ProductRating = ({ product, size = "sm", showMeta = true }) => {
         <div className="space-y-1">
             <div className="flex items-center gap-2">
                 <p className={`${valueClassName} font-medium text-gray-700 min-w-10`}>
-                    {hasRating ? rating.toFixed(1) : "New"}
+                    {reviewCount > 0 && hasRating ? rating.toFixed(1) : "No reviews yet"}
                 </p>
-                <div className="flex items-center gap-0.5">
+                {reviewCount > 0 ? <div className="flex items-center gap-0.5">
                     {Array.from({ length: 5 }).map((_, index) => (
                         <Image
                             key={index}
@@ -25,14 +25,14 @@ const ProductRating = ({ product, size = "sm", showMeta = true }) => {
                             alt={index < filledStars ? "filled star" : "empty star"}
                         />
                     ))}
-                </div>
+                </div> : null}
             </div>
 
             {showMeta && (
                 <p className="text-xs text-gray-400">
                     {likesCount} like{likesCount === 1 ? "" : "s"}
                     {reviewCount > 0 ? ` · ${reviewCount} review${reviewCount === 1 ? "" : "s"}` : ""}
-                    {!hasRating ? " · no ratings yet" : ""}
+                    {reviewCount === 0 ? " · no reviews yet" : ""}
                 </p>
             )}
         </div>

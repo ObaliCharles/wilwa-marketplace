@@ -18,6 +18,7 @@ import { getProductStockSnapshot } from "@/lib/productStock";
 import { categoryMatchesSelection } from "@/lib/marketplaceCategories";
 import { recordRecentlyViewed } from "@/lib/recentlyViewed";
 import ProductReviews from "@/components/product/ProductReviews";
+import { getDisplayDiscountPercent } from "@/lib/productListing";
 
 const Product = ({ initialProduct = null }) => {
 
@@ -278,9 +279,9 @@ const Product = ({ initialProduct = null }) => {
                                 {formatCurrency(productData.price)}
                             </span>
                         ) : null}
-                        {productActivity?.hasDiscount ? (
+                        {getDisplayDiscountPercent(productData) ? (
                           <span className="ml-3 align-middle rounded-md bg-red-500 px-2 py-1 text-sm font-bold text-white">
-                            -{productActivity.priceDropPercent}%
+                            -{getDisplayDiscountPercent(productData)}%
                           </span>
                         ) : null}
                     </p>

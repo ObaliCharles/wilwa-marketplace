@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useAppContext } from '@/context/AppContext';
 import { getProductStockSnapshot } from '@/lib/productStock';
 import { getProductRatingSnapshot } from '@/lib/productRating';
+import { getDisplayDiscountPercent } from '@/lib/productListing';
 
 const tagToneClasses = {
     orange: "bg-orange-50 text-orange-700 border-orange-200",
@@ -33,9 +34,7 @@ const ProductCard = ({ product }) => {
     const feedbackTimeoutRef = useRef(null);
     const imageBoxRef = useRef(null);
 
-    const discountPercent = product.price && product.price > product.offerPrice
-      ? Math.round(((product.price - product.offerPrice) / product.price) * 100)
-      : null;
+    const discountPercent = getDisplayDiscountPercent(product);
     const stockSnapshot = getProductStockSnapshot(product);
     const isOutOfStock = stockSnapshot.status === 'out';
     const { rating, reviewCount, hasRating, filledStars } = getProductRatingSnapshot(product);
@@ -167,7 +166,7 @@ const ProductCard = ({ product }) => {
             ) : null}
 
             <div className="mt-1.5 flex items-center gap-1 text-[11px] text-gray-500">
-                <span className="flex items-center gap-0.5">
+                {reviewCount > 0 ? <span className="flex items-center gap-0.5">
                     {[0, 1, 2, 3, 4].map((star) => (
                         <Image
                             key={star}
@@ -176,8 +175,8 @@ const ProductCard = ({ product }) => {
                             className="h-3.5 w-3.5"
                         />
                     ))}
-                </span>
-                <span>{hasRating ? rating.toFixed(1) : "New"}{reviewCount > 0 ? ` (${reviewCount})` : ""}</span>
+                </span> : null}
+                <span>{reviewCount > 0 ? `${hasRating ? rating.toFixed(1) : "New"} (${reviewCount})` : "No reviews yet"}</span>
             </div>
 
             {product.publicLocation?.displayName || product.publicLocation?.distanceLabel || product.sellerLocation || product.location ? (

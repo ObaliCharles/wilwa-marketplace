@@ -1490,12 +1490,14 @@ const AddProductInner = () => {
                   <input
                     id="product-name"
                     type="text"
-                    placeholder="Type here"
+                    placeholder="e.g., Samsung Galaxy A15 128GB"
+                    maxLength={80}
                     className="rounded-xl border border-gray-200 px-3 py-3 outline-none transition focus:border-orange-400"
                     onChange={(e) => setName(e.target.value)}
                     value={name}
                     required
                   />
+                  <p className="text-xs text-gray-500">Use a clear brand, product, and key specification (up to 80 characters).</p>
                 </div>
 
                 <div className="flex flex-col gap-1">

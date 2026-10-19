@@ -11,6 +11,7 @@ import { parseProductLocationInput } from "@/lib/productLocationInput";
 import { NextResponse } from "next/server";
 import Product from "@/models/Product";
 import User from "@/models/User";
+import { sanitizeProductTitle } from "@/lib/productListing";
 
 export async function POST(request) {
     try {
@@ -80,7 +81,11 @@ export async function POST(request) {
             return NextResponse.json({ success: false, message: "At least one product image is required" }, { status: 400 });
         }
 
-        existingProduct.name = formData.get("name");
+        const name = sanitizeProductTitle(formData.get("name"));
+        if (!name) {
+            return NextResponse.json({ success: false, message: "A product name is required" }, { status: 400 });
+        }
+        existingProduct.name = name;
         existingProduct.description = formData.get("description");
         existingProduct.category = formData.get("category");
         existingProduct.subcategory = formData.get("subcategory") || "";

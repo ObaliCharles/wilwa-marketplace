@@ -114,9 +114,9 @@ const footerColumns = [
     links: [
       ["Help Center", "/help", "help"],
       ["How to Buy", "/help/shopping", "buy"],
-      ["Shipping & Delivery", "/legal#terms", "shipping"],
-      ["Returns & Refunds", "/legal#terms", "returns"],
-      ["Contact Us", "mailto:kawilmart@gmail.com", "contact"],
+      ["Shipping & Delivery", "/legal#shipping", "shipping"],
+      ["Returns & Refunds", "/legal#returns", "returns"],
+      ["Contact Us", "mailto:support@wilwa.ug", "contact"],
       ["Track Order", "/track-order", "track"],
     ],
   },
@@ -173,12 +173,9 @@ const trustPoints = [
   { icon: "support", title: "24/7 Support", detail: "We're here to help" },
 ];
 
-const socialLinks = [
-  { key: "facebook", label: "Facebook", href: "#", hover: "hover:text-[#1877F2]" },
-  { key: "instagram", label: "Instagram", href: "#", hover: "hover:text-[#E1306C]" },
-  { key: "twitter", label: "X (Twitter)", href: "#", hover: "hover:text-white" },
-  { key: "youtube", label: "YouTube", href: "#", hover: "hover:text-[#FF0000]" },
-];
+// Social profiles are intentionally hidden until official Wilwa accounts are
+// available. Placeholder links undermine trust and send visitors nowhere.
+const socialLinks = [];
 
 const legalLinks = [
   ["Privacy Policy", "/legal#privacy"],

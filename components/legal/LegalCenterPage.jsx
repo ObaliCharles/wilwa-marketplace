@@ -188,6 +188,24 @@ const legalTabs = [
         ],
       },
       {
+        id: "shipping",
+        label: "Shipping and delivery",
+        title: "Shipping and delivery",
+        paragraphs: [
+          "Delivery availability, timing, and fees depend on the seller, item location, buyer address, and rider availability. The applicable delivery option is confirmed during checkout before an order is placed.",
+          "Customers can choose pickup where it is offered. Sellers and riders should only use the contact details provided for an active order to coordinate fulfillment.",
+        ],
+      },
+      {
+        id: "returns",
+        label: "Returns and refunds",
+        title: "Returns and refunds",
+        paragraphs: [
+          "If an item is incorrect, damaged, or materially different from its listing, contact Wilwa support promptly with the order details and any helpful evidence. Support will review the order with the relevant seller before confirming the available resolution.",
+          "Return, replacement, cancellation, or refund outcomes depend on the item, order status, seller response, and the facts of the case. Wilwa does not promise a blanket return period where one cannot be supported by the order flow.",
+        ],
+      },
+      {
         id: "seller-obligations",
         label: "Seller obligations",
         title: "Seller obligations",

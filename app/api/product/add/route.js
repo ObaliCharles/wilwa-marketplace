@@ -11,6 +11,7 @@ import { notifyMatchingSavedSearches } from "@/lib/savedSearches";
 import { NextResponse } from "next/server";
 import Product from "@/models/Product";
 import User from "@/models/User";
+import { sanitizeProductTitle } from "@/lib/productListing";
 
 export async function POST(request) {
     try {
@@ -41,7 +42,7 @@ export async function POST(request) {
 
         const formData = await request.formData();
 
-        const name = formData.get('name');
+        const name = sanitizeProductTitle(formData.get('name'));
         const description = formData.get('description');
         const category = formData.get('category');
         const subcategory = formData.get('subcategory') || '';
@@ -54,6 +55,10 @@ export async function POST(request) {
         const productLocation = await parseProductLocationInput(formData);
 
         const files = formData.getAll('images');
+
+        if (!name) {
+            return NextResponse.json({ success: false, message: 'A product name is required' }, { status: 400 });
+        }
 
         if (!files || files.length === 0) {
             return NextResponse.json({ success: false, message: 'no files uploaded' });

@@ -12,6 +12,7 @@ import { categoryMatchesSelection, getCategoryMeta, marketplaceFilterCategories 
 import { getProductActivitySnapshot, resolveProductTagSlugs, SYSTEM_TAG_DEFINITIONS } from "@/lib/liveCommerce";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { getDisplayDiscountPercent } from "@/lib/productListing";
 
 const categories = ["All", ...marketplaceFilterCategories];
 
@@ -238,9 +239,9 @@ const MobileCategoryProductCard = ({ product, formatCurrency, navigate, addToCar
     onClick={() => product?._id ? navigate(`/product/${product._id}`) : undefined}
     className={`relative min-w-0 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-100 ${product?._id ? "cursor-pointer active:scale-[0.98]" : ""}`}
   >
-    <span className={`absolute left-1 top-1 z-10 rounded px-1.5 py-0.5 text-[8px] font-black text-white ${theme.iconBg}`}>
-      -{discount}%
-    </span>
+    {getDisplayDiscountPercent(product) ? <span className={`absolute left-1 top-1 z-10 rounded px-1.5 py-0.5 text-[8px] font-black text-white ${theme.iconBg}`}>
+      -{getDisplayDiscountPercent(product)}%
+    </span> : null}
     <span className="flex h-20 items-center justify-center min-[390px]:h-24">
       <Image src={getProductImage(product)} alt={product?.name || fallbackLabel} width={130} height={105} className="h-full w-full object-contain p-1.5" />
     </span>

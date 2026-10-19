@@ -13,6 +13,7 @@ import { buildTopCategoryRail, categoryMatchesSelection, homeTopRailDefaults, TO
 import { getProductActivitySnapshot, sortProductsForLiveShowcase } from "@/lib/liveCommerce";
 import { getProductStockSnapshot } from "@/lib/productStock";
 import { getRecentlyViewedIds } from "@/lib/recentlyViewed";
+import { getDisplayDiscountPercent } from "@/lib/productListing";
 
 const takeProducts = (products, count) => products.slice(0, count);
 
@@ -584,9 +585,9 @@ const MobileFlashCard = ({ product, navigate, prefetchRoute, formatCurrency, tog
       onFocus={() => prefetchRoute(`/product/${product._id}`)}
       className={`relative isolate w-[8.5rem] shrink-0 rounded-xl p-2 text-left shadow-md interactive-lift ${getFlashCardBackground(cardIndex)}`}
     >
-      <span className="absolute left-2 top-2 z-20 rounded-md bg-gray-950/80 px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
-        -{Math.max(activity.priceDropPercent, 15)}%
-      </span>
+      {getDisplayDiscountPercent(product) ? <span className="absolute left-2 top-2 z-20 rounded-md bg-gray-950/80 px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur-sm">
+        -{getDisplayDiscountPercent(product)}%
+      </span> : null}
       <span onClick={likeProduct} className={`absolute right-2 top-2 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 shadow-sm backdrop-blur-sm ${liked ? "text-red-600" : "text-gray-500"}`}>
         <HeartGlyph filled={liked} />
       </span>
@@ -641,8 +642,8 @@ const MobileProductCard = ({ product, navigate, prefetchRoute, formatCurrency, t
       onFocus={() => prefetchRoute(`/product/${product._id}`)}
       className="relative isolate rounded-lg border border-gray-200 bg-white p-2 text-left shadow-sm"
     >
-      <span className={`absolute left-2 top-2 z-20 rounded px-2 py-1 text-[10px] font-bold text-white ${activity.hasDiscount ? "bg-rose-500" : "bg-green-500"}`}>
-        {activity.hasDiscount ? `-${activity.priceDropPercent}%` : "NEW"}
+      <span className={`absolute left-2 top-2 z-20 rounded px-2 py-1 text-[10px] font-bold text-white ${getDisplayDiscountPercent(product) ? "bg-rose-500" : "bg-green-500"}`}>
+        {getDisplayDiscountPercent(product) ? `-${getDisplayDiscountPercent(product)}%` : "NEW"}
       </span>
       <span onClick={likeProduct} className={`absolute right-2 top-2 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-sm ${liked ? "text-red-600" : "text-gray-400"}`}>
         <HeartGlyph filled={liked} />
@@ -652,8 +653,7 @@ const MobileProductCard = ({ product, navigate, prefetchRoute, formatCurrency, t
       </span>
       <span className="mt-2 line-clamp-2 min-h-[2rem] text-[12px] font-semibold leading-4 text-gray-950">{product.name}</span>
       <span className="mt-1 flex items-center gap-1 text-[11px] text-gray-500">
-        <span className="text-orange-500">★</span>
-        {activity.hasRating ? activity.displayRating.toFixed(1) : "New"} · {soldCount > 0 ? `${soldCount} sold` : "Fresh"}
+        {Array.isArray(product.reviews) && product.reviews.length > 0 ? <><span className="text-orange-500">★</span>{activity.hasRating ? activity.displayRating.toFixed(1) : "New"} · </> : null}{soldCount > 0 ? `${soldCount} sold` : Array.isArray(product.reviews) && product.reviews.length > 0 ? "Fresh" : "No reviews yet"}
       </span>
       {(product.publicLocation?.displayName || product.sellerLocation || product.location) ? <span className="mt-1 flex min-w-0 items-center gap-1 truncate text-[10px] font-medium text-gray-500"><svg className="h-3 w-3 shrink-0 text-orange-500" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 10c0 5.1-8 11-8 11S4 15.1 4 10a8 8 0 1 1 16 0Z" stroke="currentColor" strokeWidth="1.8"/><circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.8"/></svg><span className="truncate">{product.publicLocation?.displayName || product.sellerLocation || product.location}</span></span> : null}
       <span className="mt-2 flex flex-wrap items-center gap-2">
@@ -884,7 +884,7 @@ const MobileHome = ({
                   <p className="mt-2.5 line-clamp-2 min-h-[2.5rem] text-sm font-bold leading-5">{dealOfDay.name}</p>
                   <p className="mt-1 truncate text-lg font-extrabold">{formatCurrency(getPriceValue(dealOfDay.offerPrice || dealOfDay.price))}</p>
                   <p className="mt-0.5 min-h-[1.25rem] text-sm font-extrabold text-orange-400">
-                    {dealOfDayActivity.hasDiscount ? `${dealOfDayActivity.priceDropPercent}% OFF` : ""}
+                    {getDisplayDiscountPercent(dealOfDay) ? `${getDisplayDiscountPercent(dealOfDay)}% OFF` : ""}
                   </p>
                   <span className="block truncate text-[11px] text-white/75">{getProductStockSnapshot(dealOfDay).label}</span>
                 </div>
@@ -975,7 +975,7 @@ const DealCard = ({ product, navigate, prefetchRoute, formatCurrency, cardIndex 
       className={`relative isolate min-w-0 rounded-xl p-2.5 text-left shadow-md interactive-lift ${getFlashCardBackground(cardIndex)}`}
     >
       <span className="absolute left-2.5 top-2.5 z-20 rounded-md bg-gray-950/80 px-1.5 py-0.5 text-[9px] font-bold text-white backdrop-blur-sm">
-        {activity.hasDiscount ? `-${activity.priceDropPercent}%` : "Offer"}
+        {getDisplayDiscountPercent(product) ? `-${getDisplayDiscountPercent(product)}%` : "Offer"}
       </span>
       <span className="relative z-0 flex aspect-[1.15/1] items-center justify-center rounded-lg bg-white/75 p-1.5 shadow-inner backdrop-blur-sm">
         <ProductImage product={product} alt={product.name} width={140} height={118} className="h-full w-full object-contain" />
@@ -1185,9 +1185,9 @@ const DesktopFlashDealCard = ({ product, navigate, prefetchRoute, formatCurrency
       onFocus={() => prefetchRoute(`/product/${product._id}`)}
       className="group relative min-w-0 rounded-xl bg-white p-3 text-left shadow-sm transition duration-200 hover:-translate-y-1 hover:bg-white hover:shadow-[0_16px_34px_rgba(15,23,42,0.12)]"
     >
-      <span className="absolute left-3 top-3 z-20 rounded bg-red-600 px-2 py-1 text-[10px] font-bold leading-none text-white">
-        -{Math.max(activity.priceDropPercent, activity.hasDiscount ? activity.priceDropPercent : 10)}%
-      </span>
+      {getDisplayDiscountPercent(product) ? <span className="absolute left-3 top-3 z-20 rounded bg-red-600 px-2 py-1 text-[10px] font-bold leading-none text-white">
+        -{getDisplayDiscountPercent(product)}%
+      </span> : null}
       <span className="flex h-28 items-center justify-center rounded-md bg-gray-50 transition group-hover:bg-orange-50/40">
         <ProductImage product={product} alt={product.name} width={190} height={160} className="h-full w-full object-contain p-2" />
       </span>
@@ -1631,6 +1631,7 @@ const MegaStoreHome = ({ siteContent, initialProducts = [] }) => {
       ? initialProducts
       : [];
   const sortedProducts = sortProductsForLiveShowcase(storefrontProducts);
+  const inStockProducts = sortedProducts.filter((product) => getProductStockSnapshot(product).status !== "out");
   const heroProduct = sortedProducts[0];
   // Flash Deals only ever shows products that are genuinely flagged as an
   // active flash deal (real discount, within its start/end window, see
@@ -1638,17 +1639,18 @@ const MegaStoreHome = ({ siteContent, initialProducts = [] }) => {
   // "discount" promotionType are a different concept and must not appear
   // here, or the countdown has nothing real to count down to.
   const flashDealProducts = useMemo(
-    () => sortedProducts.filter((product) => getProductActivitySnapshot(product).flashDealActive),
-    [flashClockTick, sortedProducts]
+    () => inStockProducts.filter((product) => getProductActivitySnapshot(product).flashDealActive),
+    [flashClockTick, inStockProducts]
   );
   const dealProducts = takeProducts(
     uniqueById(flashDealProducts)
       .sort((leftProduct, rightProduct) => (Number(rightProduct.date) || 0) - (Number(leftProduct.date) || 0)),
     5
   );
-  const homeProducts = productsInCategories(sortedProducts, ["Home & Living", "Appliances", "Construction & Tools"], 10);
-  const electronicsProducts = productsInCategories(sortedProducts, ["Computers & Electronics", "Phones & Tablets", "Audio", "Watches & Wearables", "Accessories"], 10);
-  const recommendedProducts = sortedProducts;
+  const homeProducts = productsInCategories(inStockProducts, ["Home & Living", "Appliances", "Construction & Tools"], 10);
+  const electronicsProducts = productsInCategories(inStockProducts, ["Computers & Electronics", "Phones & Tablets", "Audio", "Watches & Wearables", "Accessories"], 10);
+  const recommendedProducts = inStockProducts;
+  const exploreProducts = inStockProducts.slice(6).length ? inStockProducts.slice(6) : inStockProducts;
   const heroSlides = resolvedContent.heroSlides.filter((slide) => slide.imageUrl);
   const promoSlides = resolvedContent.promoBanners.filter((banner) => banner.imageUrl);
   const featuredCards = resolvedContent.featuredCards.filter((card) => card.imageUrl);
@@ -1664,7 +1666,7 @@ const MegaStoreHome = ({ siteContent, initialProducts = [] }) => {
     return linkedProduct ? getProductActivitySnapshot(linkedProduct).flashDealActive : false;
   });
   const storeCards = Object.entries(
-    sortedProducts.reduce((acc, product) => {
+    inStockProducts.reduce((acc, product) => {
       const storeId = product.userId || product.sellerProfile?.id || product.sellerProfile?._id;
       if (!storeId) {
         return acc;
@@ -1678,6 +1680,7 @@ const MegaStoreHome = ({ siteContent, initialProducts = [] }) => {
       return acc;
     }, {})
   )
+    .filter(([, storeProducts]) => storeProducts.length >= 2)
     .map(([storeId, storeProducts]) => {
       const sortedStoreProducts = sortProductsForLiveShowcase(storeProducts);
       const primaryProduct = sortedStoreProducts[0];
@@ -1810,7 +1813,7 @@ const MegaStoreHome = ({ siteContent, initialProducts = [] }) => {
       dealOfDayBanners={dealOfDayBanners}
       dealProducts={dealProducts}
       recommendedProducts={recommendedProducts}
-      sortedProducts={sortedProducts}
+      sortedProducts={exploreProducts}
       storeCards={visibleStoreCards}
       storeLoadMoreRef={storeLoadMoreRef}
       dealDeadline={earliestDealDeadline}
