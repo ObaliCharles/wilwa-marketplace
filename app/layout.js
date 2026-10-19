@@ -42,7 +42,7 @@ export const metadata = {
   applicationName: "Wilwa Uganda",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "Wilwa" },
-  icons: { icon: "/favicon.ico", apple: "/icon-192" },
+  icons: { icon: "/favicon.ico", apple: "/icons/wilwa-192.png" },
   keywords: ["online shopping Uganda", "Northern Uganda marketplace", "buy online Uganda", "Wilwa", "Uganda ecommerce"],
   alternates: { canonical: "/" },
   openGraph: {
