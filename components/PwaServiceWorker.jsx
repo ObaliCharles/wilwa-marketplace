@@ -6,11 +6,18 @@ export default function PwaServiceWorker() {
   useEffect(() => {
     if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return undefined;
 
-    window.addEventListener("load", () => {
+    const register = () => {
       navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {
         // PWA remains optional if a host blocks service worker registration.
       });
-    }, { once: true });
+    };
+
+    // Client effects often run after `load`; registering immediately in that
+    // case avoids silently missing the event and never becoming installable.
+    if (document.readyState === "complete") register();
+    else window.addEventListener("load", register, { once: true });
+
+    return () => window.removeEventListener("load", register);
   }, []);
 
   return null;
