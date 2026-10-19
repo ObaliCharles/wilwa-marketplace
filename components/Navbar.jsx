@@ -12,6 +12,7 @@ import { buildCategoryHref, homeCategoryValues, getCategoryMeta } from "@/lib/ma
 import CategoryLineIcon from "@/components/CategoryLineIcon";
 import SearchPanel, { MobileSearchBody } from "@/components/SearchPanel";
 import { getRecentSearches, addRecentSearch, removeRecentSearch, clearRecentSearches } from "@/lib/recentSearches";
+import InstallWilwaButton from "@/components/InstallWilwaButton";
 
 // Tolerates a single typo (one insertion, deletion, or substitution) so
 // searches like "nkie" still find "nike".
@@ -1086,7 +1087,7 @@ const Navbar = ({ hideMobileHeader = false, mobilePageTitle = "", showMobilePage
             </div>
             <div className="divide-y divide-gray-100">
               <section className="px-3.5 py-2">
-                <button type="button" onClick={() => goTo('/help')} className="flex w-full items-center justify-between py-2.5 text-left text-[11px] font-bold uppercase tracking-wide text-gray-500">
+              <button type="button" onClick={() => goTo('/help')} className="flex w-full items-center justify-between py-2.5 text-left text-[11px] font-bold uppercase tracking-wide text-gray-500">
                   Need help?
                   <ChevronRight />
                 </button>
@@ -1199,6 +1200,7 @@ const Navbar = ({ hideMobileHeader = false, mobilePageTitle = "", showMobilePage
                 All Categories
                 <span className="text-gray-500"><ChevronDown /></span>
               </button>
+              <InstallWilwaButton className="my-2 w-full" />
               {openDropdown === 'search-categories' ? (
                 <CategoryDropdown
                   categories={homeCategoryValues.slice(0, 12)}
@@ -1235,6 +1237,7 @@ const Navbar = ({ hideMobileHeader = false, mobilePageTitle = "", showMobilePage
           </form>
 
           <div className="ml-auto hidden items-center gap-4 md:flex">
+            <InstallWilwaButton />
             {isAuthenticated ? (
               <>
                 <NavAction label="Orders" onClick={() => navigate('/my-orders')}><BagIcon /></NavAction>

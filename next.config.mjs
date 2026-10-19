@@ -105,6 +105,12 @@ const nextConfig = {
     async headers() {
         return [
             {
+                // Browsers must check for an updated worker on each visit so
+                // an older offline shell cannot outlive a deployed release.
+                source: '/sw.js',
+                headers: [{ key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' }],
+            },
+            {
                 source: '/:path*',
                 headers: securityHeaders,
             },

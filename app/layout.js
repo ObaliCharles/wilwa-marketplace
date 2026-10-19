@@ -6,6 +6,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import RouteLoader from "@/components/RouteLoader";
 import RouteShell from "@/components/RouteShell";
 import { getSiteUrl } from "@/lib/siteUrl";
+import PwaServiceWorker from "@/components/PwaServiceWorker";
 
 const siteUrl = getSiteUrl();
 const normalizedSiteUrl = siteUrl.replace(/\/$/, "");
@@ -39,6 +40,9 @@ export const metadata = {
   title: "Wilwa | Northern Uganda's Trusted Online Store",
   description: "Shop fashion, beauty, electronics, home essentials, and more from trusted local sellers on Wilwa, Uganda's online marketplace.",
   applicationName: "Wilwa Uganda",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "Wilwa" },
+  icons: { apple: "/icon-192" },
   keywords: ["online shopping Uganda", "Northern Uganda marketplace", "buy online Uganda", "Wilwa", "Uganda ecommerce"],
   alternates: { canonical: "/" },
   openGraph: {
@@ -69,6 +73,7 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  themeColor: "#ea580c",
 };
 
 export default function RootLayout({ children }) {
@@ -134,6 +139,7 @@ export default function RootLayout({ children }) {
           />
           <Suspense fallback={null}>
             <AppContextProvider>
+              <PwaServiceWorker />
               <RouteLoader />
               <RouteShell>
                 {children}
