@@ -1200,7 +1200,6 @@ const Navbar = ({ hideMobileHeader = false, mobilePageTitle = "", showMobilePage
                 All Categories
                 <span className="text-gray-500"><ChevronDown /></span>
               </button>
-              <InstallWilwaButton className="my-2 w-full" />
               {openDropdown === 'search-categories' ? (
                 <CategoryDropdown
                   categories={homeCategoryValues.slice(0, 12)}
