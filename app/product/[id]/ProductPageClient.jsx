@@ -35,7 +35,10 @@ const Product = ({ initialProduct = null }) => {
     const [productError, setProductError] = useState("");
     const [showFullDescription, setShowFullDescription] = useState(false);
     const [liking, setLiking] = useState(false);
+    const [shareMenuOpen, setShareMenuOpen] = useState(false);
+    const [shareFeedback, setShareFeedback] = useState("");
     const mainImageRef = useRef(null);
+    const shareMenuRef = useRef(null);
     const [cartAction, setCartAction] = useState(null);
     const [addedFeedback, setAddedFeedback] = useState(false);
     const feedbackTimeoutRef = useRef(null);
@@ -104,6 +107,78 @@ const Product = ({ initialProduct = null }) => {
         setLiking(true);
         await toggleProductLike(productData._id);
         setLiking(false);
+    };
+
+    const getProductShareUrl = () => {
+        if (typeof window === "undefined" || !productData?._id) {
+            return "";
+        }
+
+        return `${window.location.origin}/product/${encodeURIComponent(productData._id)}`;
+    };
+
+    const getShareText = () => `Check out ${productData?.name || "this product"} on Wilwa`;
+
+    const copyShareLink = async () => {
+        const shareUrl = getProductShareUrl();
+        if (!shareUrl) {
+            return;
+        }
+
+        try {
+            if (navigator.clipboard?.writeText && window.isSecureContext) {
+                await navigator.clipboard.writeText(shareUrl);
+            } else {
+                const input = document.createElement("input");
+                input.value = shareUrl;
+                input.setAttribute("readonly", "");
+                input.style.position = "fixed";
+                input.style.opacity = "0";
+                document.body.appendChild(input);
+                input.select();
+                const copied = document.execCommand("copy");
+                document.body.removeChild(input);
+                if (!copied) {
+                    throw new Error("Copy command was unavailable");
+                }
+            }
+            setShareFeedback("Link copied");
+        } catch {
+            setShareFeedback("Could not copy link");
+        }
+    };
+
+    const handleNativeShare = async () => {
+        const shareUrl = getProductShareUrl();
+        if (!shareUrl) {
+            return;
+        }
+
+        if (!navigator.share) {
+            await copyShareLink();
+            return;
+        }
+
+        try {
+            await navigator.share({ title: productData.name, text: getShareText(), url: shareUrl });
+            setShareMenuOpen(false);
+        } catch (error) {
+            if (error?.name !== "AbortError") {
+                setShareFeedback("Could not open sharing options");
+            }
+        }
+    };
+
+    const openSharePlatform = (baseUrl) => {
+        const shareUrl = getProductShareUrl();
+        if (!shareUrl) {
+            return;
+        }
+
+        const popup = window.open(baseUrl(shareUrl, getShareText()), "_blank", "noopener,noreferrer");
+        if (popup) {
+            popup.opener = null;
+        }
     };
 
     const handleAddToCart = async () => {
@@ -175,6 +250,31 @@ const Product = ({ initialProduct = null }) => {
         };
     }, []);
 
+    useEffect(() => {
+        if (!shareMenuOpen) {
+            return undefined;
+        }
+
+        const handlePointerDown = (event) => {
+            if (!shareMenuRef.current?.contains(event.target)) {
+                setShareMenuOpen(false);
+            }
+        };
+
+        const handleKeyDown = (event) => {
+            if (event.key === "Escape") {
+                setShareMenuOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handlePointerDown);
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("mousedown", handlePointerDown);
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [shareMenuOpen]);
+
     if (!loadingProduct && !productData) {
         return (
             <>
@@ -245,16 +345,50 @@ const Product = ({ initialProduct = null }) => {
                         <h1 className="text-[22px] font-bold leading-tight text-gray-950">
                             {productData.name}
                         </h1>
-                        <button
-                            onClick={handleLikeClick}
-                            className={`shrink-0 rounded-md border px-4 py-2 text-xs font-semibold transition sm:text-sm ${
-                                productData.likedByCurrentUser
-                                    ? "border-orange-200 bg-orange-50 text-orange-700"
-                                    : "border-gray-200 bg-white text-gray-600 hover:border-orange-200 hover:text-orange-600"
-                            } ${liking ? "opacity-60" : ""}`}
-                        >
-                            {productData.likedByCurrentUser ? "Liked" : "Like"} · {productData.likesCount || 0}
-                        </button>
+                        <div className="flex shrink-0 items-center gap-2">
+                            <div ref={shareMenuRef} className="relative">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShareFeedback("");
+                                        setShareMenuOpen((open) => !open);
+                                    }}
+                                    className="inline-flex items-center gap-2 rounded-md border border-gray-200 bg-white px-3 py-2 text-xs font-semibold text-gray-600 transition hover:border-orange-200 hover:text-orange-600 sm:text-sm"
+                                    aria-expanded={shareMenuOpen}
+                                    aria-haspopup="menu"
+                                    aria-label="Share product"
+                                >
+                                    <svg className="h-4 w-4" aria-hidden="true" viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 16V3m0 0L7 8m5-5 5 5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                    Share
+                                </button>
+                                {shareMenuOpen ? (
+                                    <div role="menu" aria-label="Share product options" className="absolute right-0 z-20 mt-2 w-52 rounded-xl border border-gray-100 bg-white p-2 shadow-lg">
+                                        <button type="button" role="menuitem" onClick={handleNativeShare} className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700">
+                                            Share via device
+                                        </button>
+                                        <button type="button" role="menuitem" onClick={copyShareLink} className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700">
+                                            {shareFeedback || "Copy link"}
+                                        </button>
+                                        <div className="my-1 border-t border-gray-100" />
+                                        <button type="button" role="menuitem" onClick={() => openSharePlatform((url, text) => `https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`)} className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700">WhatsApp</button>
+                                        <button type="button" role="menuitem" onClick={() => openSharePlatform((url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`)} className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700">Facebook</button>
+                                        <button type="button" role="menuitem" onClick={() => openSharePlatform((url, text) => `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`)} className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700">X</button>
+                                    </div>
+                                ) : null}
+                            </div>
+                            <button
+                                onClick={handleLikeClick}
+                                className={`rounded-md border px-4 py-2 text-xs font-semibold transition sm:text-sm ${
+                                    productData.likedByCurrentUser
+                                        ? "border-orange-200 bg-orange-50 text-orange-700"
+                                        : "border-gray-200 bg-white text-gray-600 hover:border-orange-200 hover:text-orange-600"
+                                } ${liking ? "opacity-60" : ""}`}
+                            >
+                                {productData.likedByCurrentUser ? "Liked" : "Like"} · {productData.likesCount || 0}
+                            </button>
+                        </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 text-sm">
                       <ProductRating product={productData} size="lg" />
