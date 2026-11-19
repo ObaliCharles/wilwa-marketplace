@@ -364,7 +364,7 @@ const Product = ({ initialProduct = null }) => {
                                     Share
                                 </button>
                                 {shareMenuOpen ? (
-                                    <div role="menu" aria-label="Share product options" className="absolute right-0 z-20 mt-2 w-52 rounded-xl border border-gray-100 bg-white p-2 shadow-lg">
+                                    <div role="menu" aria-label="Share product options" className="absolute left-0 z-20 mt-2 w-52 rounded-xl border border-gray-100 bg-white p-2 shadow-lg sm:left-auto sm:right-0">
                                         <button type="button" role="menuitem" onClick={handleNativeShare} className="w-full rounded-lg px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700">
                                             Share via device
                                         </button>
