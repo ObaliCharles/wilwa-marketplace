@@ -133,7 +133,13 @@ export const AppContextProvider = (props) => {
     const searchParams = useSearchParams()
 
     const { user, isLoaded: isUserLoaded } = useUser()
-    const { getToken, isLoaded: isAuthLoaded } = useAuth()
+    const { getToken: clerkGetToken, isLoaded: isAuthLoaded } = useAuth()
+    // Clerk can briefly return an empty token during session hydration. Retry
+    // once before issuing API requests so signed-in calls carry their session.
+    const getToken = useCallback(async () => {
+        const token = await clerkGetToken()
+        return token || await clerkGetToken({ skipCache: true })
+    }, [clerkGetToken])
     const authReady = isUserLoaded && isAuthLoaded
 
     const [products, setProducts] = useState([])
