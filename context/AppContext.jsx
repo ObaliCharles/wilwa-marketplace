@@ -134,8 +134,7 @@ export const AppContextProvider = (props) => {
 
     const { user, isLoaded: isUserLoaded } = useUser()
     const { getToken: clerkGetToken, isLoaded: isAuthLoaded } = useAuth()
-    // Clerk can briefly return an empty token during session hydration. Retry
-    // once before issuing API requests so signed-in calls carry their session.
+    // Retry without the token cache if Clerk has not returned a token yet.
     const getToken = useCallback(async () => {
         const token = await clerkGetToken()
         return token || await clerkGetToken({ skipCache: true })
